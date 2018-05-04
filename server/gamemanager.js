@@ -4,8 +4,9 @@ const H = require('./helpers');
 let games = [];
 
 class Game {
-	constructor(playersList) {
+	constructor(playersList, gameConfig) {
 		this.players = playersList;
+		this.config = gameConfig;
 	}
 }
 
