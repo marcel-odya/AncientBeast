@@ -10,6 +10,8 @@ import p2 from 'expose-loader?p2!phaser-ce/build/custom/p2.js';
 import Phaser from 'expose-loader?Phaser!phaser-ce/build/custom/phaser-split.js';
 
 import Game from './game';
+import Helpers from './ui/helpers';
+import Emit from './network/emitFunctions';
 
 // Load the stylesheet
 import './style/main.less';
@@ -57,13 +59,16 @@ const abilitiesGenerators = [
 abilitiesGenerators.forEach(generator => generator(G));
 
 $j(document).ready(() => {
+	let LANButton = $j('#startLANButton'),
+		hotseatButton = $j('#startHotseatButton');
 	$j('.typeRadio').buttonset();
-	$j('#startButton').button();
+	hotseatButton.button();
+	LANButton.button();
 
 	// Disable initial game setup until browser tab has focus
 	window.addEventListener('blur', G.onBlur.bind(G), false);
 	window.addEventListener('focus', G.onFocus.bind(G), false);
-	$j('form#gameSetup').submit(e => {
+	hotseatButton.click(e => {
 		e.preventDefault(); // Prevent submit
 		let gameconfig = getGameConfig();
 
@@ -77,6 +82,29 @@ $j(document).ready(() => {
 
 		G.loadGame(gameconfig);
 		return false; // Prevent submit
+	});
+	LANButton.click(e => {
+		e.preventDefault(); // Prevent submit
+		let gameconfig = getGameConfig();
+
+		if (gameconfig.background_image == 'random') {
+			// nth-child indices start at 1
+			let index = Math.floor(Math.random() * ($j('input[name="combatLocation"]').length - 1)) + 1;
+			gameconfig.background_image = $j('input[name="combatLocation"]')
+				.slice(index, index + 1)
+				.attr('value');
+		}
+
+		Emit.startNewGame(gameconfig);
+		Helpers.hideSettings();
+		Helpers.toggleQueueModal();
+		// setInterval
+		// //Adding event when clicking outside the modal to hide it
+		// window.onclick = function(event) {
+		// 	if (event.target == document.getElementById('waitingQueueModal')) {
+		// 		Helpers.toggleQueueModal();
+		// 	}
+		// }
 	});
 });
 

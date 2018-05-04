@@ -9,9 +9,9 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const port = process.env.PORT || 8080;
 const ip = process.env.IP || null; // Use specified IP to bind to otherwise, bind to default for the API.
-// const gameManager = require('./server/gamemanager.js');
+const gameManager = require('./server/gamemanager.js');
 const qManager = require('./server/queuemanager.js');
-
+const H = require('./server/helpers');
 /**
  * Require a module if it's available, returns the module if so, otherwise, false.
  * @param {string} path Path to the module.
@@ -41,31 +41,37 @@ if (process.env.NODE_ENV !== 'production' && webpackDevMiddleware) {
 	);
 }
 
-/**
- * Generate a random id for each player that connects to the game.
- * @return {string} The id.
- */
-function makeId() {
-	let text = '';
-	let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-	for (let i = 0; i < 5; i++) {
-		text += possible.charAt(Math.floor(Math.random() * possible.length));
-	}
-
-	return text;
-}
-
 // Setup the game queue and connection details
 io.on('connection', function(session) {
 	console.log('a user connected');
 
-	// Store the username in the socket session for this client
-	let username = makeId();
-	session.username = username;
+	// Check the queue on every connection
 
-	// Add user to the queue
-	qManager.addToQueue(session);
+	// Store the ID in the socket session for this client
+	let ID = H.Helpers.makeId();
+	session.ID = ID;
+
+	session.on('start new game', data => {
+		// Add user to the queue
+		console.log(data);
+		session.gameConfig = data;
+		qManager.addToQueue(session);
+
+		let players = qManager.checkQueueForGame();
+
+		if (players.length > 1) {
+			let gameID = gameManager.startGame(players);
+			for (let i in players) {
+				if (typeof players[i] !== undefined) {
+					players[i].join(gameID);
+				} else {
+					return;
+				}
+			}
+			// Sending gameID to all players
+			io.in(gameID).emit('joined game', gameID);
+		}
+	});
 
 	session.on('disconnect', function() {
 		console.log('user disconnected');

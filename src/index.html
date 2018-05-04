@@ -116,9 +116,10 @@
 				<br>
 				<br>
 				<div style="font-size: 1.5em !important; text-shadow: 2px 2px black; margin-top: -20px;">
-					<span class="blink">PRESS </span>
-					<input class="startButton" id="startButton" type="submit" value="START">
-					<span class="blink"> BUTTON</span>
+					<!-- <span class="blink">PRESS </span> -->
+					<input class="startButton" id="startHotseatButton" type="submit" value="START HOTSEAT">
+					<input class="startButton" id="startLANButton" type="submit"  value="START LAN">
+					<!-- <span class="blink"> BUTTON</span> -->
 				</div>
 			</form>
 			<div id="version">Version 0.3 Pre-Alpha</div>
@@ -925,6 +926,20 @@
 	</div>
 	<!--Google Analytics-->
 	<%= JSON.stringify(htmlWebpackPlugin.options.google) %>
+
+	<!--____________________________________________________-->
+	<!--                     MODALS                         -->
+	<!--____________________________________________________-->
+	<div id="waitingQueueModal" class="modal">
+
+		<!-- Modal content -->
+		<div class="modal-content">
+		  <h1 id="waitingQueueModalMessage">Waiting for other players</p>
+			<img src="<%= require('./style/svg/queueLoader.svg') %>" width="100%" />
+
+		</div>
+	  
+	  </div>
 </body>
 
 </html>

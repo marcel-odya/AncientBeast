@@ -1,13 +1,17 @@
 // Game manager module
-var games = [];
+const H = require('./helpers');
 
-function Game(playerA, playerB) {
-	this.playerA = playerA;
-	this.playerB = playerB;
-};
+let games = [];
 
-exports.startGame = function(playerA, playerB) {
-	var newGame = new Game(playerA, playerB);
-	games.push(newGame);
-	console.log("Starting a 2 players match");
+class Game {
+	constructor(playersList) {
+		this.players = playersList;
+	}
 }
+
+exports.startGame = function(playersList) {
+	let newGame = new Game(playersList);
+	games.push(newGame);
+	console.log('Starting a 2 players match');
+	return H.Helpers.makeId();
+};

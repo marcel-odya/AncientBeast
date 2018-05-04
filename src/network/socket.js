@@ -1,4 +1,5 @@
 import * as io from 'socket.io-client';
+import Helpers from '../ui/helpers';
 
 let socket = io();
 let server = {};
@@ -7,7 +8,7 @@ let server = {};
 socket.on('login', function(data) {
 	server.connected = true;
 	// Display the welcome message
-	let message = 'Connected To Game Server as user: ' + data;
+	let message = 'Connected To local Game Server as user: ' + data;
 	server.userName = data;
 	console.log(message);
 });
@@ -35,6 +36,11 @@ socket.on('stop typing', function(data) {
 	//removeChatTyping(data);
 });
 
+socket.on('joined game', data => {
+	console.log('Joined game with ID ' + data);
+	Helpers.changeQueueModalText('The game will begin soon');
+});
+
 // Sends a chat message
 function sendMessage() {
 	//var message = $inputMessage.val();
@@ -51,3 +57,5 @@ function sendMessage() {
 	//  socket.emit('new message', message);
 	//  }
 }
+
+export default socket;
