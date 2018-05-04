@@ -1,13 +1,12 @@
-const gameManager = require('./gamemanager.js');
 let queue = [];
 
 exports.addToQueue = function(player) {
 	queue.push(player);
-	console.log('ADDED PLAYER: ' + player.username + ' TO QUEUE, Size:' + queue.length);
+	console.log('ADDED PLAYER: ' + player.ID + ' TO QUEUE, Size:' + queue.length);
 };
 
 exports.removeFromQueue = function(player) {
-	removePlayerFromQueue(player.username);
+	removePlayerFromQueue(player.ID);
 	console.log('Remove Player Queue Size: ' + queue.length);
 };
 
@@ -31,12 +30,18 @@ exports.checkQueueForGame = function() {
 	}
 	return 0;
 };
-
-function removePlayerFromQueue(username) {
+/**
+ *	function removePlayerFromQueue
+ *
+ * @param {string} ID - player's ID
+ * @returns {boolean} - Returns true if the ID existed
+ */
+function removePlayerFromQueue(ID) {
 	for (let i = 0; i < queue.length; i++) {
-		if (queue[i].username === username) {
+		if (queue[i].ID === ID) {
 			queue.splice(i, 1);
-			break;
+			return true;
 		}
 	}
+	return false;
 }

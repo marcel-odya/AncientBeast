@@ -13,6 +13,6 @@ class Game {
 exports.startGame = function(playersList) {
 	let newGame = new Game(playersList);
 	games.push(newGame);
-	console.log('Starting a 2 players match');
+	console.log('Starting a ' + playersList.length + ' players match');
 	return H.Helpers.makeId();
 };

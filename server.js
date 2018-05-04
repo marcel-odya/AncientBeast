@@ -63,7 +63,9 @@ io.on('connection', function(session) {
 			let gameID = gameManager.startGame(players);
 			for (let i in players) {
 				if (typeof players[i] !== undefined) {
-					players[i].join(gameID);
+					let player = players[i];
+					player.join(gameID);
+					qManager.removeFromQueue(player);
 				} else {
 					return;
 				}
