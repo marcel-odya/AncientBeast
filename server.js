@@ -54,24 +54,36 @@ io.on('connection', function(session) {
 	session.on('start new game', data => {
 		// Add user to the queue
 		console.log(data);
-		session.gameConfig = data;
-		qManager.addToQueue(session);
+		qManager.addToQueue(session, data);
 
-		let players = qManager.checkQueueForGame();
+		let matchups = qManager.checkQueueForGame();
+		// console.debug(matchups);
+		// We're checking if there are any matchups possible and then
+		// we send an information to the clients if they joined a game
+		if (matchups) {
+			for (let i in matchups) {
+				if (typeof matchups[i] !== undefined) {
+					let modes = matchups[i];
 
-		if (players.length > 1) {
-			let gameID = gameManager.startGame(players);
-			for (let i in players) {
-				if (typeof players[i] !== undefined) {
-					let player = players[i];
-					player.join(gameID);
-					qManager.removeFromQueue(player);
-				} else {
-					return;
+					for (let ii in modes) {
+						if (typeof modes[ii] !== undefined) {
+							let matchup = modes[ii];
+							let gameID = gameManager.startGame(matchup);
+							for (let iii in matchup) {
+								if (typeof matchup[iii] !== undefined) {
+									let player = matchup[iii];
+									player.join(gameID);
+									qManager.removeFromQueue(player);
+								}
+							}
+							// Sending gameID to all players
+							io.in(gameID).emit('joined game', gameID);
+						} else {
+							return;
+						}
+					}
 				}
 			}
-			// Sending gameID to all players
-			io.in(gameID).emit('joined game', gameID);
 		}
 	});
 

@@ -1,6 +1,7 @@
 let queue = [];
 
-exports.addToQueue = function(player) {
+exports.addToQueue = function(player, config) {
+	player.gameConfig = config;
 	queue.push(player);
 	console.log('ADDED PLAYER: ' + player.ID + ' TO QUEUE, Size:' + queue.length);
 };
@@ -10,25 +11,40 @@ exports.removeFromQueue = function(player) {
 	console.log('Remove Player Queue Size: ' + queue.length);
 };
 
-// We will call this periodically to check if there are enough players
-// If we have enough players it will return 2 of the player sessions for a game
+// We will call this on every `start new game` event to check if there are any possible matchups
+// If we have enough players it will return the object of 2 arrays of arrays with players's sessions
 exports.checkQueueForGame = function() {
-	let queueCount = 0,
-		players = [];
+	let matchups = {},
+		players1v1 = [],
+		players2v2 = [];
+
 	for (let i in queue) {
-		if (typeof i !== undefined) {
-			if (queueCount == 0) {
-				players.push(queue[i]);
+		if (typeof queue[i] !== undefined) {
+			let player = queue[i];
+
+			if (player.gameConfig.playerMode == 2) {
+				players1v1.push(player);
+				if (players1v1.length == 2) {
+					if (!matchups.twoPlayers) {
+						matchups.twoPlayers = [];
+					}
+					matchups.twoPlayers.push(players1v1);
+					players1v1 = [];
+				}
+			} else if (player.gameConfig.playerMode == 4) {
+				players2v2.push(player);
+				if (players2v2.length == 4) {
+					if (!matchups.fourPlayers) {
+						matchups.fourPlayers = [];
+					}
+					matchups.fourPlayers.push(players2v2);
+					players2v2 = [];
+				}
 			}
-			if (queueCount == 1) {
-				players.push(queue[i]);
-				queueCount = 0;
-				return players;
-			}
-			queueCount++;
 		}
 	}
-	return 0;
+	// console.debug(matchups);
+	return matchups;
 };
 /**
  *	function removePlayerFromQueue
