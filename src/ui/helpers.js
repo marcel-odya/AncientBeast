@@ -4,7 +4,7 @@ const Helpers = {
 	hideSettings: () => {
 		$j('#gameSetupContainer').hide();
 	},
-	toggleQueueModal: () => {
+	toggleQueueModal: (callback = () => {}) => {
 		let modal = $j('#waitingQueueModal');
 		if (modal.css('display') == 'block') {
 			modal.animate(
@@ -15,6 +15,7 @@ const Helpers = {
 				() => {
 					// Animation complete.
 					modal.css('display', 'none');
+					callback();
 				}
 			);
 		} else {
@@ -26,6 +27,7 @@ const Helpers = {
 				5000,
 				() => {
 					// Animation complete.
+					callback();
 				}
 			);
 		}

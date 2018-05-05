@@ -11,6 +11,8 @@ import { Player } from './player';
 import { UI } from './ui/interface';
 import { Creature } from './creature';
 import dataJson from 'assets/units/data.json';
+import socket from './network/socket';
+import Helpers from './ui/helpers';
 
 /* Game Class
  *
@@ -51,6 +53,7 @@ export default class Game {
 	 */
 	constructor(version) {
 		this.version = version || 'dev';
+		this.online = false;
 		this.abilities = [];
 		this.players = [];
 		this.creatures = [];
@@ -176,9 +179,14 @@ export default class Game {
 		};
 	}
 
+	setAsOnline() {
+		//TODO: Add some deleting of stuff that isn't useful in online mode (save/load ???)
+		this.online = true;
+	}
+
 	dataLoaded(data) {
 		let dpcolor = ['blue', 'orange', 'green', 'red'];
-
+		this.gameState = 'loaded';
 		this.creatureData = data;
 
 		data.forEach(creature => {
@@ -227,6 +235,14 @@ export default class Game {
 		});
 
 		this.Phaser.load.start();
+
+		if (this.online) {
+			this.Phaser.load.onLoadComplete.add(() => {
+				socket.emit('game loaded');
+				Helpers.changeQueueModalText('Game loaded. Waiting for other players');
+				Helpers.toggleQueueModal();
+			});
+		}
 	}
 
 	/* loadGame(setupOpt) preload

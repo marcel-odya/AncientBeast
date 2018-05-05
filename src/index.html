@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset='utf-8'>
-	<meta name="viewport" content="initial-scale=1, maximum-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=0.75, maximum-scale=1">
 
 	<title>Ancient Beast 0.3</title>
 </head>
@@ -23,10 +23,21 @@
 			<form id="gameSetup">
 				<div id="settings">
 					<div class="cont">
-						<h2>Player Mode [ Hotseat ]</h2>
+						<h2>Player Mode</h2>
 						<span id="playerMode" class="typeRadio">
-							<input type="radio" id="p2" name="playerMode" value="2" checked><label for="p2">1 versus 1</label>
-							<input type="radio" id="p4" name="playerMode" value="4"><label for="p4">2 versus 2</label>
+							<input type="radio" id="p2" name="playerMode" value="2" checked>
+							<label for="p2">1 versus 1</label>
+							<input type="radio" id="p4" name="playerMode" value="4">
+							<label for="p4">2 versus 2</label>
+						</span>
+					</div>
+					<div class="cont">
+						<h2>Connection mode</h2>
+						<span id="connectionMode" class="typeRadio">
+							<input type="radio" id="local" name="connectionMode" value="local" checked>
+							<label for="local">Hotseat (same device)</label>
+							<input type="radio" id="lan" name="connectionMode" value="lan">
+							<label for="lan">LAN</label>
 						</span>
 					</div>
 					<div class="cont">
@@ -116,10 +127,10 @@
 				<br>
 				<br>
 				<div style="font-size: 1.5em !important; text-shadow: 2px 2px black; margin-top: -20px;">
-					<!-- <span class="blink">PRESS </span> -->
-					<input class="startButton" id="startHotseatButton" type="submit" value="START HOTSEAT">
-					<input class="startButton" id="startLANButton" type="submit"  value="START LAN">
-					<!-- <span class="blink"> BUTTON</span> -->
+					<span class="blink">PRESS </span>
+					<input class="startButton" id="startButton" type="submit" value="START" />
+					<!-- <input class="startButton" id="startLANButton"  value="LAN"> -->
+					<span class="blink"> BUTTON</span>
 				</div>
 			</form>
 			<div id="version">Version 0.3 Pre-Alpha</div>

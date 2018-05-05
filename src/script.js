@@ -35,7 +35,7 @@ import swineThugAbilitiesGenerator from './abilities/Swine-Thug';
 import uncleFungusAbilitiesGenerator from './abilities/Uncle-Fungus';
 
 // Create the game
-const G = new Game('0.3');
+export const G = new Game('0.3');
 
 // Load the abilities
 const abilitiesGenerators = [
@@ -59,19 +59,18 @@ const abilitiesGenerators = [
 abilitiesGenerators.forEach(generator => generator(G));
 
 $j(document).ready(() => {
-	let LANButton = $j('#startLANButton'),
-		hotseatButton = $j('#startHotseatButton');
+	let button = $j('#startButton');
+
 	$j('.typeRadio').buttonset();
-	hotseatButton.button();
-	LANButton.button();
+	button.button();
 
 	// Disable initial game setup until browser tab has focus
 	window.addEventListener('blur', G.onBlur.bind(G), false);
 	window.addEventListener('focus', G.onFocus.bind(G), false);
-	hotseatButton.click(e => {
+	button.click(e => {
 		e.preventDefault(); // Prevent submit
 		let gameconfig = getGameConfig();
-
+		console.debug(gameconfig);
 		if (gameconfig.background_image == 'random') {
 			// nth-child indices start at 1
 			let index = Math.floor(Math.random() * ($j('input[name="combatLocation"]').length - 1)) + 1;
@@ -79,35 +78,22 @@ $j(document).ready(() => {
 				.slice(index, index + 1)
 				.attr('value');
 		}
+		if (gameconfig.connectionMode === 'local') {
+			G.loadGame(gameconfig);
+		} else if (gameconfig.connectionMode === 'lan') {
+			G.setAsOnline();
 
-		G.loadGame(gameconfig);
+			Emit.startNewGame(gameconfig);
+			Helpers.hideSettings();
+			Helpers.toggleQueueModal();
+		}
+
 		return false; // Prevent submit
 	});
-	LANButton.click(e => {
-		e.preventDefault(); // Prevent submit
-		let gameconfig = getGameConfig();
-
-		if (gameconfig.background_image == 'random') {
-			// nth-child indices start at 1
-			let index = Math.floor(Math.random() * ($j('input[name="combatLocation"]').length - 1)) + 1;
-			gameconfig.background_image = $j('input[name="combatLocation"]')
-				.slice(index, index + 1)
-				.attr('value');
-		}
-
-		Emit.startNewGame(gameconfig);
-		Helpers.hideSettings();
-		Helpers.toggleQueueModal();
-		// setInterval
-		// //Adding event when clicking outside the modal to hide it
-		// window.onclick = function(event) {
-		// 	if (event.target == document.getElementById('waitingQueueModal')) {
-		// 		Helpers.toggleQueueModal();
-		// 	}
-		// }
-	});
 });
-
+/**
+ *
+ */
 export function getGameConfig() {
 	let defaultConfig = {
 			playerMode: $j('input[name="playerMode"]:checked').val() - 0,
@@ -117,7 +103,8 @@ export function getGameConfig() {
 			plasma_amount: $j('input[name="plasmaPoints"]:checked').val() - 0,
 			turnTimePool: $j('input[name="turnTime"]:checked').val() - 0,
 			timePool: $j('input[name="timePool"]:checked').val() * 60,
-			background_image: $j('input[name="combatLocation"]:checked').val()
+			background_image: $j('input[name="combatLocation"]:checked').val(),
+			connectionMode: $j('input[name="connectionMode"]:checked').val()
 		},
 		config = G.gamelog.gameConfig || defaultConfig;
 
@@ -131,4 +118,17 @@ export function isEmpty(obj) {
 		}
 	}
 	return true;
+}
+
+/** The function is used in socket.on events
+ * @param {object} config - Game config
+ * @returns {bool} - Returns true if the game starts to load
+ */
+export function startGameLocallyWithConfig(config) {
+	if (G.loadGame(config)) {
+		Helpers.toggleQueueModal();
+		return true;
+	} else {
+		return false;
+	}
 }

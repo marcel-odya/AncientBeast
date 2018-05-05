@@ -50,6 +50,7 @@ io.on('connection', function(session) {
 	// Store the ID in the socket session for this client
 	let ID = H.Helpers.makeId();
 	session.ID = ID;
+	session.name = H.Helpers.makeFunnyName();
 
 	session.on('start new game', data => {
 		// Add user to the queue
@@ -73,11 +74,12 @@ io.on('connection', function(session) {
 								if (typeof matchup[iii] !== undefined) {
 									let player = matchup[iii];
 									player.join(gameID);
+									player.gameID = gameID;
 									qManager.removeFromQueue(player);
 								}
 							}
 							// Sending gameID to all players
-							io.in(gameID).emit('joined game', gameID);
+							io.in(gameID).emit('joined game', gameID, matchup[0].gameConfig);
 						} else {
 							return;
 						}
@@ -87,13 +89,26 @@ io.on('connection', function(session) {
 		}
 	});
 
+	session.on('game loaded', () => {
+		console.debug('User ' + session.ID + ' loaded the game');
+
+		gameManager.getGame(session.gameID).setPlayerAsLoaded(session.ID);
+
+		if (gameManager.getGame(session.gameID).checkIfPlayersLoaded()) {
+			io.in(session.gameID).emit('all players loaded');
+		}
+	});
+
 	session.on('disconnect', function() {
-		console.log('user disconnected');
+		console.log(session.ID + ' aka ' + session.name + ' disconnected');
 		qManager.removeFromQueue(session);
+		if (session.gameID) {
+			io.in(session.gameID).emit('player left game', session.name);
+		}
 	});
 
 	// Send user the username
-	session.emit('login', session.username);
+	session.emit('login', session.ID);
 });
 
 // Listen for server, and use static routing for deploy directory

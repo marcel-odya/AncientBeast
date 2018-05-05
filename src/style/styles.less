@@ -1422,11 +1422,17 @@ span.pure {
 }
 @media (max-height: 525px) {
 	#gameTitle {
+		right: 0.1vw;
 		transform: rotate(90deg);
-		vertical-align: middle;
+		/* vertical-align: middle; */
 		position: fixed;
-		margin-top: 205;
-		padding: 0 105;
+		/* margin-right: 190px; */
+		/* padding: 0px 5px; */
+		height: 100vh;
+		width: 100vh;
+		img {
+			width: 100vh; // Width as height because we rotated 90deg
+		}
 	}
 
 	#settings {
@@ -1457,14 +1463,15 @@ a {
 }
 
 #gameSetupContainer #gameSetup {
-	position: absolute;
+	/* position: relative; */
 	display: block;
-	left: 50%;
-	top: 50%;
-	margin: -175px 0 0 -255px;
+	/* left: 50%; */
+	/* top: 50%; */
+	margin: auto;
+	margin: 0px 0;
 }
 
-#startButton {
+.startButton {
 	background: transparent;
 	background-image: url('~assets/interface/small_button.png');
 	background-size: 190px;
@@ -1473,11 +1480,11 @@ a {
 	height: 74px;
 }
 
-#startButton:hover {
+.startButton:hover {
 	filter: brightness(135%);
 }
 
-#startButton:focus {
+.startButton:focus {
 	outline: 0;
 	color: white;
 }
