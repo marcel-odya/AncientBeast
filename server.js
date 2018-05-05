@@ -43,14 +43,13 @@ if (process.env.NODE_ENV !== 'production' && webpackDevMiddleware) {
 
 // Setup the game queue and connection details
 io.on('connection', function(session) {
-	console.log('a user connected');
-
 	// Check the queue on every connection
 
 	// Store the ID in the socket session for this client
 	let ID = H.Helpers.makeId();
 	session.ID = ID;
 	session.name = H.Helpers.makeFunnyName();
+	console.debug('User ' + ID + ' aka `' + session.name + '` joined the game');
 
 	session.on('start new game', data => {
 		// Add user to the queue
@@ -76,6 +75,7 @@ io.on('connection', function(session) {
 									player.join(gameID);
 									player.gameID = gameID;
 									qManager.removeFromQueue(player);
+									player.emit('order number', iii);
 								}
 							}
 							// Sending gameID to all players
@@ -91,11 +91,16 @@ io.on('connection', function(session) {
 
 	session.on('game loaded', () => {
 		console.debug('User ' + session.ID + ' loaded the game');
+		let game = gameManager.getGame(session.gameID);
+		game.setPlayerAsLoaded(session.ID);
 
-		gameManager.getGame(session.gameID).setPlayerAsLoaded(session.ID);
-
-		if (gameManager.getGame(session.gameID).checkIfPlayersLoaded()) {
+		if (game.checkIfPlayersLoaded()) {
+			let firstMove = game.randomizeFirstMovingPlayer(),
+				randomToken = H.Helpers.makeId();
 			io.in(session.gameID).emit('all players loaded');
+			io.in(session.gameID).emit('first moving player', firstMove);
+			// Telling the client to start and activate creature 0
+			io.to(game.getPlayerByOrder(firstMove).ID).emit('your turn', 0, randomToken);
 		}
 	});
 
@@ -105,6 +110,10 @@ io.on('connection', function(session) {
 		if (session.gameID) {
 			io.in(session.gameID).emit('player left game', session.name);
 		}
+	});
+
+	session.on('user clicked button', data => {
+		console.debug(data);
 	});
 
 	// Send user the username

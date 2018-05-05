@@ -1,5 +1,5 @@
 import * as io from 'socket.io-client';
-import { startGameLocallyWithConfig, G } from '../script';
+import { startGameLocallyWithConfig, setActiveCreature, setPlayersOrder } from '../script';
 import Helpers from '../ui/helpers';
 
 let socket = io();
@@ -54,8 +54,18 @@ socket.on('player left game', name => {
 	Helpers.changeQueueModalText(name + ' has left the game!');
 	Helpers.toggleQueueModal(Helpers.toggleQueueModal());
 });
+socket.on('order number', no => {
+	console.debug("You're " + no + '. player');
+	setPlayersOrder(no);
+});
+socket.on('your turn', (creatureId, token) => {
+	console.debug('TOKEN: ' + token);
+	console.debug('current creature: ');
+	console.debug(setActiveCreature(creatureId));
+});
+
 /** Sends a chat message
- *
+ * @returns {bool} -
  */
 function sendMessage() {
 	//var message = $inputMessage.val();

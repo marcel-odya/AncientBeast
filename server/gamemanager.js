@@ -24,6 +24,14 @@ class Game {
 		return false;
 	}
 
+	getPlayerByOrder(order) {
+		if (order >= 0 && order <= this.getPlayersCount()) {
+			return this.players[order];
+		} else {
+			console.debug('Bad order number given');
+		}
+	}
+
 	setPlayerAsLoaded(playersID) {
 		if (!this.setPlayersAttr(playersID, 'isLoaded', true)) {
 			console.debug('Something went wrong while setting ' + playersID + ' as loaded');
@@ -34,7 +42,7 @@ class Game {
 
 	checkIfPlayersLoaded() {
 		for (let i = 0; i < this.getPlayersCount(); i++) {
-			if (!this.players[i]['isLoaded']) {
+			if (!this.players[i].isLoaded) {
 				console.debug(i + '. player still not loaded in game ' + this.gameID);
 				return false;
 			}
@@ -49,6 +57,12 @@ class Game {
 
 	getGamesID() {
 		return this.gameID;
+	}
+
+	randomizeFirstMovingPlayer() {
+		let firstPlayer = Math.floor(Math.random() * this.getPlayersCount());
+		console.debug(firstPlayer + '. has the first move');
+		return firstPlayer;
 	}
 }
 

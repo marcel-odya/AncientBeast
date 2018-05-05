@@ -1,14 +1,18 @@
 import * as $j from 'jquery';
+import Emit from '../network/emitFunctions';
 
 export class Button {
 	/**
 	 * Constructor
 	 *
 	 *	Create attributes and default buttons
-	 *
+	 * @param {Object} opts - Objects for extending the jQuery Object
+	 * @param {Object} game - The game's instance
+	 * @param {bool} ifOnlineGame - Defaults by false, true if the game is online
 	 */
-	constructor(opts, game) {
+	constructor(opts, game, ifOnlineGame = false) {
 		this.game = game;
+		this.onlineGame = ifOnlineGame;
 
 		let defaultOpts = {
 			click: function() {},
@@ -26,6 +30,18 @@ export class Button {
 				normal: {}
 			}
 		};
+		// It's controlled by the server response
+		if (ifOnlineGame) {
+			this.clickInjectedFunction = () => {
+				Emit.userClickedButton(this.$button);
+			};
+			opts.clickable = false;
+			opts.state = 'disabled';
+			opts.click = () => {
+				this.clickInjectedFunction();
+				opts.click();
+			};
+		}
 
 		opts = $j.extend(defaultOpts, opts);
 		$j.extend(this, opts);

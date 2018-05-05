@@ -132,3 +132,26 @@ export function startGameLocallyWithConfig(config) {
 		return false;
 	}
 }
+/** Sets active creature
+ * @param {Int} creatureNo - creature's number
+ * @returns {Object} - returns active player
+ */
+export function setActiveCreature(creatureNo) {
+	creatureNo = parseInt(creatureNo, 10);
+	if (G.players[G.playersNumber][creatureNo]) {
+		G.activeCreature = G.players[G.playersNumber].creatures[creatureNo];
+	}
+	return G.activeCreature;
+}
+
+/** Sets players number (order) in online game
+ * @param {Int} no - players order
+ * @returns {bool} - true
+ */
+export function setPlayersOrder(no) {
+	G.playersNumber = no;
+	return true;
+}
+// export function setTokenForNextEmit(token) {
+// 	G.token = token;
+// }

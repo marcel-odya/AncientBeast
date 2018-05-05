@@ -468,7 +468,7 @@ export default class Game {
 			// Initialize players' starting positions
 			let pos = {};
 
-			if (playerMode > 2) {
+			if (playerMode == 4) {
 				// If 4 players
 				switch (player.id) {
 					case 0:
@@ -496,7 +496,7 @@ export default class Game {
 						};
 						break;
 				}
-			} else {
+			} else if (playerMode == 2) {
 				// If 2 players
 				switch (player.id) {
 					case 0:
@@ -519,7 +519,7 @@ export default class Game {
 
 		this.activeCreature = this.players[0].creatures[0]; // Prevent errors
 
-		this.UI = new UI(this); // Create UI (not before because some functions require creatures to already exist)
+		this.UI = new UI(this, this.online); // Create UI (not before because some functions require creatures to already exist)
 
 		// DO NOT CALL LOG BEFORE UI CREATION
 		this.gameState = 'playing';

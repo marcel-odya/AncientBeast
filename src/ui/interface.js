@@ -34,7 +34,7 @@ export class UI {
 	 * Create attributes and default buttons
 	 *
 	 */
-	constructor(game) {
+	constructor(game, ifOnlineGame = false) {
 		this.game = game;
 		this.$display = $j('#ui');
 		this.$queue = $j('#queuewrapper');
@@ -57,7 +57,8 @@ export class UI {
 					this.toggleDash();
 				}
 			},
-			game
+			game,
+			ifOnlineGame
 		);
 		this.buttons.push(this.btnToggleDash);
 
@@ -71,7 +72,8 @@ export class UI {
 					}
 				}
 			},
-			game
+			game,
+			ifOnlineGame
 		);
 		this.buttons.push(this.btnAudio);
 
@@ -92,7 +94,8 @@ export class UI {
 					}
 				}
 			},
-			game
+			game,
+			ifOnlineGame
 		);
 		this.buttons.push(this.btnSkipTurn);
 
@@ -120,7 +123,8 @@ export class UI {
 					}
 				}
 			},
-			game
+			game,
+			ifOnlineGame
 		);
 		this.buttons.push(this.btnDelay);
 
@@ -150,7 +154,8 @@ export class UI {
 				},
 				state: 'disabled'
 			},
-			game
+			game,
+			ifOnlineGame
 		);
 		this.buttons.push(this.btnFlee);
 
@@ -433,7 +438,8 @@ export class UI {
 						}
 					}
 				},
-				game
+				game,
+				ifOnlineGame
 			);
 			this.buttons.push(b);
 			this.abilitiesButtons.push(b);
@@ -455,7 +461,8 @@ export class UI {
 					}
 				}
 			},
-			game
+			game,
+			ifOnlineGame
 		);
 
 		this.$dash.find('.section.numbers .stat').bind('mouseover', event => {
